@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuários</title>
+</head>
+<body>
+    <h1>Lista de Usuários</h1>
+    <table id="tabela-usuarios">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Grupo</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tbody-usuarios">
+            <!-- Aqui os usuários serão adicionados dinamicamente -->
+        </tbody>
+    </table>
+    <a href="/cadastrar-usuario.html">Incluir Usuário</a>
+
+    <script>
+        // Aqui você precisa enviar uma requisição AJAX para buscar os usuários do backend
+        fetch('/lista-usuarios.html')
+            .then(response => response.json())
+            .then(usuarios => {
+                const tbody = document.getElementById('tbody-usuarios');
+                usuarios.forEach(usuario => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${usuario.nome}</td>
+                        <td>${usuario.email}</td>
+                        <td>${usuario.ativo ? 'Ativo' : 'Inativo'}</td>
+                        <td>${usuario.grupo}</td>
+                        <td>
+                            <a href="/alterar-usuario/${usuario._id}.html">Alterar</a>
+                            ${usuario.ativo ? `
+                                <form action="/inativar-usuario/${usuario._id}" method="POST">
+                                    <button type="submit">Inativar</button>
+                                </form>
+                            ` : `
+                                <form action="/reativar-usuario/${usuario._id}" method="POST">
+                                    <button type="submit">Reativar</button>
+                                </form>
+                            `}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(error => console.error('Erro ao buscar usuários:', error));
+    </script>
+</body>
+</html>
