@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRBA | Alterar Usuário</title>
+    <link rel="stylesheet" href="../public/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>QRBA | Alterar Usuário</h1>
+        <nav>
+            <ul>
+                <li><a href="../views/index.html">Home</a></li>
+                <li><a href="../views/dashboard.html">Dashboard</a></li>
+                <li><a href="../views/listar-usuarios.html">Listar Usuários</a></li>
+                <li><a href="../views/cadastrar-usuario.html">Cadastrar Usuário</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>Alterar Usuário</h2>
+        <form id="alterarUsuarioForm">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required><br>
+            <label for="cpf">CPF:</label>
+            <input type="text" id="cpf" name="cpf" required><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br>
+            <label for="senha">Nova Senha:</label>
+            <input type="password" id="senha" name="senha" required><br>
+            <label for="confirmarSenha">Confirmar Nova Senha:</label>
+            <input type="password" id="confirmarSenha" name="confirmarSenha" required><br>
+            <label for="grupo">Grupo:</label>
+            <select id="grupo" name="grupo" required>
+                <option value="admin">Administrador</option>
+                <option value="estoquista">Estoquista</option>
+            </select><br>
+            <button type="submit" id="botaoAlterar">Salvar Alterações</button>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById('alterarUsuarioForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const nome = document.getElementById('nome').value;
+            const cpf = document.getElementById('cpf').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+            const grupo = document.getElementById('grupo').value;
+
+            if (senha !== confirmarSenha) {
+                alert('As senhas não coincidem.');
+                return;
+            }
+
+            fetch('/alterar-usuario', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nome: nome,
+                    cpf: cpf,
+                    email: email,
+                    senha: senha,
+                    grupo: grupo
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Usuário alterado com sucesso!');
+                    window.location.href = '/listar-usuarios.html';
+                } else {
+                    alert('Erro ao alterar usuário: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao alterar usuário:', error);
+                alert('Erro ao alterar usuário. Por favor, tente novamente mais tarde.');
+            });
+        });
+    </script>
+</body>
+</html>
